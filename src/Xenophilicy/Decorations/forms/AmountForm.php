@@ -15,11 +15,11 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\decoration\Decoration;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\CustomForm;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\CustomForm;
+use BreathTakinglyBinary\libDynamicForms\Form;
 
 /**
  * Class AmountForm
@@ -28,7 +28,7 @@ use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
 class AmountForm extends CustomForm implements FormConstants {
     
     /** @var Decoration */
-    private $decoration;
+    private Decoration $decoration;
     
     public function __construct(Decoration $decoration, int $limit, Form $previousForm){
         $this->decoration = $decoration;

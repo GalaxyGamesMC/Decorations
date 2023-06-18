@@ -15,13 +15,14 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
+use cooldogedev\BedrockEconomy\libs\cooldogedev\libSQL\context\ClosureContext;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\decoration\Decoration;
 use Xenophilicy\Decorations\Decorations;
 use Xenophilicy\Decorations\entity\DecorationEntity;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\SimpleForm;
+use BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\SimpleForm;
 
 /**
  * Class SettingsForm
@@ -29,10 +30,10 @@ use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\SimpleForm
  */
 class SettingsForm extends SimpleForm implements FormConstants {
     
-    /** @var DecorationEntity */
-    private $entity;
+    /** @var DecorationEntity|null */
+    private ?DecorationEntity $entity;
     /** @var Decoration */
-    private $decoration;
+    private Decoration $decoration;
     
     public function __construct(Decoration $decoration, Form $previousForm = null, DecorationEntity $entity = null){
         $this->decoration = $decoration;
@@ -81,14 +82,21 @@ class SettingsForm extends SimpleForm implements FormConstants {
             case self::SELL:
                 $modifier = Decorations::getSetting("sell-percentage") / 100;
                 $price = $this->decoration->getPrice() * $modifier;
-                Decorations::getInstance()->getEconomy()->addMoney($player, $price);
+                Decorations::getInstance()->getEconomy()->getAPI()->addToPlayerBalance(
+                    $player->getName(),
+                    $price,
+                    ClosureContext::create(
+                        function (bool $wasUpdated): void {
+                        },
+                    )
+                );
                 if(is_null($this->entity)){
                     Decorations::getInstance()->getArchiveManager()->getArchive($player->getName())->removeStored($this->decoration->getId(), 1);
                 }else{
                     $this->entity->flagForDespawn();
                     Decorations::getInstance()->getArchiveManager()->getArchive($this->entity->getOwner())->removeSpawned($this->decoration->getId(), 1);
                 }
-                $unit = Decorations::getInstance()->getEconomy()->getMonetaryUnit();
+                $unit = "$";
                 $form = new AlertForm(TF::YELLOW . "Decoration has been sold for " . TF::DARK_GREEN . ($unit . ($price > 0 ? $price : "FREE")));
                 break;
             default:

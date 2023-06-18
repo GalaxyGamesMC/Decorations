@@ -24,11 +24,11 @@ use Xenophilicy\Decorations\Decorations;
 class DecorationCategory {
     
     /** @var string */
-    private $name;
+    private string $name;
     /** @var Decoration[] */
-    private $decorations = [];
+    private array $decorations = [];
     /** @var string */
-    private $format;
+    private mixed $format;
     
     public function __construct(string $name, array $data){
         $this->name = $name;

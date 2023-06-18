@@ -25,11 +25,11 @@ use Xenophilicy\Decorations\Decorations;
 class ArchiveManager {
     
     /** @var PlayerArchive[] */
-    private $archives = [];
+    private array $archives = [];
     /** @var array */
-    private $data;
+    private array $data;
     /** @var Config */
-    private $file;
+    private Config $file;
     
     public function __construct(){
         Decorations::getInstance()->saveResource("archives.json");
@@ -47,13 +47,16 @@ class ArchiveManager {
         }
         return $archive;
     }
-    
+
+    /**
+     * @throws \JsonException
+     */
     public function saveData(): void{
         foreach($this->archives as $player => $archive){
             $entries = [];
             foreach($archive->getAllEntries() as $id => $entry){
                 $entryData = ["id" => $id, "spawned" => $entry->getSpawned(), "stored" => $entry->getStored()];
-                array_push($entries, $entryData);
+                $entries[] = $entryData;
             }
             $this->data[$player] = $entries;
         }

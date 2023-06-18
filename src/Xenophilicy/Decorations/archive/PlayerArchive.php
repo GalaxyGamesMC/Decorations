@@ -24,9 +24,9 @@ use Xenophilicy\Decorations\Decorations;
 class PlayerArchive {
     
     /** @var string */
-    private $name;
+    private string $name;
     /** @var ArchiveEntry[] */
-    private $entries = [];
+    private array $entries = [];
     
     public function __construct(string $name, array $data){
         $this->name = $name;

@@ -15,12 +15,12 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\decoration\DecorationCategory;
 use Xenophilicy\Decorations\Decorations;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\SimpleForm;
+use BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\SimpleForm;
 
 /**
  * Class ListDecorationsForm
@@ -29,14 +29,14 @@ use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\SimpleForm
 class ListDecorationsForm extends SimpleForm implements FormConstants {
     
     /** @var DecorationCategory */
-    private $category;
+    private DecorationCategory $category;
     
     public function __construct(DecorationCategory $category, Form $previousForm){
         $this->category = $category;
         parent::__construct(self::TITLE, $previousForm);
         $this->setContent(TF::LIGHT_PURPLE . "Select a decoration to view");
         foreach($category->getAllDecorations() as $id => $decoration){
-            $unit = Decorations::getInstance()->getEconomy()->getMonetaryUnit();
+            $unit = "$";
             $price = $decoration->getPrice();
             $price = $unit . ($price > 0 ? $price : "FREE");
             $this->addButton(TF::DARK_AQUA . $decoration->getFormat() . TF::GRAY . " | " . TF::DARK_GREEN . $price, $id);

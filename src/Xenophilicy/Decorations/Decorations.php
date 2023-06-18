@@ -1,25 +1,17 @@
 <?php
-# MADE BY:
-#  __    __                                          __        __  __  __
-# /  |  /  |                                        /  |      /  |/  |/  |
-# $$ |  $$ |  ______   _______    ______    ______  $$ |____  $$/ $$ |$$/   _______  __    __
-# $$  \/$$/  /      \ /       \  /      \  /      \ $$      \ /  |$$ |/  | /       |/  |  /  |
-#  $$  $$<  /$$$$$$  |$$$$$$$  |/$$$$$$  |/$$$$$$  |$$$$$$$  |$$ |$$ |$$ |/$$$$$$$/ $$ |  $$ |
-#   $$$$  \ $$    $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |$$ |$$ |$$ |      $$ |  $$ |
-#  $$ /$$  |$$$$$$$$/ $$ |  $$ |$$ \__$$ |$$ |__$$ |$$ |  $$ |$$ |$$ |$$ |$$ \_____ $$ \__$$ |
-# $$ |  $$ |$$       |$$ |  $$ |$$    $$/ $$    $$/ $$ |  $$ |$$ |$$ |$$ |$$       |$$    $$ |
-# $$/   $$/  $$$$$$$/ $$/   $$/  $$$$$$/  $$$$$$$/  $$/   $$/ $$/ $$/ $$/  $$$$$$$/  $$$$$$$ |
-#                                         $$ |                                      /  \__$$ |
-#                                         $$ |                                      $$    $$/
-#                                         $$/                                        $$$$$$/
 
 namespace Xenophilicy\Decorations;
 
-use onebone\economyapi\EconomyAPI;
-use pocketmine\entity\Entity;
+use cooldogedev\BedrockEconomy\BedrockEconomy;
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+use pocketmine\entity\Human;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\plugin\PluginBase;
+use pocketmine\world\World;
 use Xenophilicy\Decorations\archive\ArchiveManager;
 use Xenophilicy\Decorations\commands\DecorationCommand;
+use Xenophilicy\Decorations\decoration\Decoration;
 use Xenophilicy\Decorations\decoration\DecorationManager;
 use Xenophilicy\Decorations\entity\DecorationEntity;
 
@@ -32,21 +24,22 @@ class Decorations extends PluginBase {
     const CONFIG_VERSION = "1.1.0";
     
     /** @var array */
-    public static $settings;
+    public static array $settings;
     /** @var Decorations */
-    private static $instance;
-    /** @var EconomyAPI */
-    private $economy;
+    private static Decorations $instance;
+    /** @var BedrockEconomy|null $economy */
+    private ?BedrockEconomy $economy;
     /** @var DecorationManager */
-    private $decorationManager;
+    private DecorationManager $decorationManager;
     /** @var ArchiveManager */
-    private $archiveManager;
+    private ArchiveManager $archiveManager;
     
     /**
      * @param string $setting
      * @return int|string|bool
      */
-    public static function getSetting(string $setting){
+    public static function getSetting(string $setting): bool|int|string
+    {
         return self::$settings[$setting] ?? false;
     }
     
@@ -54,15 +47,19 @@ class Decorations extends PluginBase {
         return self::$instance;
     }
     
-    public function getEconomy(): ?EconomyAPI{
+    public function getEconomy(): ?BedrockEconomy{
         return $this->economy;
     }
     
     public function getDecorationManager(): DecorationManager{
         return $this->decorationManager;
     }
-    
-    public function onDisable(){
+
+    /**
+     * @throws \JsonException
+     */
+    public function onDisable(): void
+    {
         $archive = $this->getArchiveManager();
         if(is_null($archive)) return;
         $archive->saveData();
@@ -72,7 +69,8 @@ class Decorations extends PluginBase {
         return $this->archiveManager;
     }
     
-    public function onEnable(){
+    public function onEnable(): void
+    {
         $this->saveDefaultConfig();
         self::$instance = $this;
         self::$settings = $this->getConfig()->getAll();
@@ -93,12 +91,15 @@ class Decorations extends PluginBase {
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getServer()->getInstance()->getCommandMap()->register("Decorations", new DecorationCommand());
-        Entity::registerEntity(DecorationEntity::class, true, ["Decoration"]);
+        EntityFactory::getInstance()->register(DecorationEntity::class, function (World $world, CompoundTag $nbt): DecorationEntity {
+            return new DecorationEntity(EntityDataHelper::parseLocation($nbt, $world), Human::parseSkinNBT($nbt), $nbt);
+        }, ['Decoration']);
         $this->decorationManager = new DecorationManager();
         $this->archiveManager = new ArchiveManager();
-        $this->economy = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
-        if(!is_null($this->economy)) return;
-        $this->getLogger()->notice("EconomyAPI is not installed, so prices will revert to FREE");
+        $this->economy = $this->getServer()->getPluginManager()->getPlugin("BedrockEconomy");
+        if ($this->economy === null) {
+            $this->getLogger()->notice("BedrockEconomy is not installed, so prices will revert to FREE");
+        }
     }
     
     public function getDecorationDirectory(bool $internal): string{

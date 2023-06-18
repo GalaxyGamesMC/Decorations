@@ -17,7 +17,7 @@ namespace Xenophilicy\Decorations\forms;
 
 use BreathTakinglyBinary\libDynamicForms\CustomForm;
 use BreathTakinglyBinary\libDynamicForms\Form;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\decoration\Decoration;
 
@@ -28,7 +28,7 @@ use Xenophilicy\Decorations\decoration\Decoration;
 class PrePurchaseForm extends CustomForm implements FormConstants {
     
     /** @var Decoration */
-    private $decoration;
+    private Decoration $decoration;
     
     public function __construct(Decoration $decoration, Form $previousForm){
         $this->decoration = $decoration;
@@ -45,7 +45,7 @@ class PrePurchaseForm extends CustomForm implements FormConstants {
      * @param        $data
      */
     public function onResponse(Player $player, $data): void{
-        $form = new ConfirmPurchaseForm($this->decoration, $data[self::AMOUNT], $this);
+        $form = new ConfirmPurchaseForm($this->decoration, $data[self::AMOUNT], 0, $this);
         $player->sendForm($form);
     }
 }

@@ -15,12 +15,12 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\archive\ArchiveEntry;
 use Xenophilicy\Decorations\Decorations;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\CustomForm;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\CustomForm;
+use BreathTakinglyBinary\libDynamicForms\Form;
 
 /**
  * Class RemoveFromArchiveForm
@@ -29,7 +29,7 @@ use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
 class RemoveFromArchiveForm extends CustomForm implements FormConstants {
     
     /** @var ArchiveEntry */
-    private $entry;
+    private ArchiveEntry $entry;
     
     public function __construct(ArchiveEntry $entry, Form $previousForm){
         $this->entry = $entry;

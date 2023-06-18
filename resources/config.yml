@@ -23,8 +23,7 @@ enable-shop: true
 # This is the item that represents a decoration in the player's inventory
 # The default is a white bed
 item:
-  id: 355
-  damage: 0
+  name: Diamond
   # Set the item's lore (text under name)
   lore: "§3Tap the ground to place me"
   # Choose whether the item should have an enchant glint

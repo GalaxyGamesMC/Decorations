@@ -17,9 +17,9 @@ namespace Xenophilicy\Decorations\commands;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\Decorations;
 use Xenophilicy\Decorations\forms\MainForm;
@@ -28,7 +28,7 @@ use Xenophilicy\Decorations\forms\MainForm;
  * Class DecorationCommand
  * @package Xenophilicy\Decorations\commands
  */
-class DecorationCommand extends Command implements PluginIdentifiableCommand {
+class DecorationCommand extends Command implements PluginOwned {
     
     public function __construct(){
         parent::__construct("decoration");
@@ -36,9 +36,14 @@ class DecorationCommand extends Command implements PluginIdentifiableCommand {
         $this->setPermission("decorations.menu");
         $this->setDescription("Decorations menu");
     }
-    
+
+    public function getOwningPlugin(): Plugin
+    {
+        return Decorations::getInstance();
+    }
+
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool{
-        if(!$sender->hasPermission($this->getPermission())){
+        if(!$this->testPermission($sender)) {
             $sender->sendMessage(TF::RED . "You don't have permission to view the decoration menu");
             return false;
         }

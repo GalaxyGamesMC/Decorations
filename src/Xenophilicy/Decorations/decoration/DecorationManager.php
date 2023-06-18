@@ -25,7 +25,7 @@ use Xenophilicy\Decorations\Decorations;
 class DecorationManager {
     
     /** @var DecorationCategory[] */
-    private $categories = [];
+    private array $categories = [];
     
     public function __construct(){
         $file = new Config(Decorations::getInstance()->getDataFolder() . "decorations.json", Config::JSON);

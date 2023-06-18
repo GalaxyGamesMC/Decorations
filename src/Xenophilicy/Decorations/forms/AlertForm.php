@@ -15,9 +15,9 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\SimpleForm;
+use pocketmine\player\Player;
+use BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\SimpleForm;
 
 /**
  * Class AlertForm

@@ -15,12 +15,13 @@
 
 namespace Xenophilicy\Decorations\forms;
 
-use pocketmine\Player;
+use cooldogedev\BedrockEconomy\libs\cooldogedev\libSQL\context\ClosureContext;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 use Xenophilicy\Decorations\decoration\Decoration;
 use Xenophilicy\Decorations\Decorations;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\Form;
-use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\ModalForm;
+use BreathTakinglyBinary\libDynamicForms\Form;
+use BreathTakinglyBinary\libDynamicForms\ModalForm;
 
 /**
  * Class ConfirmPurchaseForm
@@ -29,11 +30,11 @@ use Xenophilicy\Decorations\libs\BreathTakinglyBinary\libDynamicForms\ModalForm;
 class ConfirmPurchaseForm extends ModalForm implements FormConstants {
     
     /** @var Decoration */
-    private $decoration;
+    private Decoration $decoration;
     /** @var int */
-    private $amount;
+    private int $amount;
     /** @var int */
-    private $location;
+    private int $location;
     
     public function __construct(Decoration $decoration, int $amount, int $location, Form $previousForm){
         $this->decoration = $decoration;
@@ -41,7 +42,7 @@ class ConfirmPurchaseForm extends ModalForm implements FormConstants {
         $this->location = $location;
         parent::__construct(self::TITLE, $previousForm);
         $price = $decoration->getPrice() * $this->amount;
-        $unit = Decorations::getInstance()->getEconomy()->getMonetaryUnit();
+        $unit = "$";
         $price = $unit . ($price > 0 ? $price : "FREE");
         $this->setContent(TF::YELLOW . "Please confirm you'd like to buy " . TF::AQUA . $amount . "x " . $decoration->getFormat() . TF::YELLOW . " for " . TF::DARK_GREEN . $price);
         $this->setButton1(TF::GREEN . "Confirm");
@@ -67,7 +68,14 @@ class ConfirmPurchaseForm extends ModalForm implements FormConstants {
                 $location = "inventory";
             }
             $price = $this->decoration->getPrice() * $this->amount;
-            Decorations::getInstance()->getEconomy()->reduceMoney($player, $price);
+            Decorations::getInstance()->getEconomy()->getAPI()->subtractFromPlayerBalance(
+                $player->getName(),
+                $price,
+                ClosureContext::create(
+                    function (bool $wasUpdated): void {
+                    },
+                )
+            );
             $form = new AlertForm(TF::GREEN . "You've added " . TF::AQUA . $this->amount . "x " . $this->decoration->getFormat() . TF::GREEN . " to your $location", new
             MainForm());
         }

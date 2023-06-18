@@ -24,11 +24,11 @@ use Xenophilicy\Decorations\decoration\Decoration;
 class ArchiveEntry {
     
     /** @var Decoration */
-    private $decoration;
+    private Decoration $decoration;
     /**@var int */
-    private $stored;
+    private int $stored;
     /**@var int */
-    private $spawned;
+    private int $spawned;
     
     public function __construct(Decoration $decoration, int $spawned, int $stored){
         $this->decoration = $decoration;
